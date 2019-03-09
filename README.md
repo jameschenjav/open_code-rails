@@ -29,11 +29,15 @@ This gem simply inject some CSS and JS to HTML response while status is 500. You
 
 ## Configuration
 
+### Basic - in config file
+
 You should put settings in `config/environments/development.rb` because this gem should only work in dev server. It will prevent production server starting up.
 
 1. `config.open_code.editor` - default: `'vscode'`
 
     Currently only support `'vscode'` and `'vscodium'`. It will be used to link's scheme part, like `vscode://` or `vscodium://`. You can set it any string but probably won't work, unless your editor supports `<scheme>://file/<absolute file path>`.
+
+    Set to `false`, `'off'` or `'disabled'` to disable this gem
 
     ```ruby
     # config/environments/development.rb
@@ -63,3 +67,27 @@ You should put settings in `config/environments/development.rb` because this gem
       config.open_code.editor = '/Users/MyName/projects'
     end
     ```
+
+### Advanced - via Environment Variables
+
+Some flexibility is probably required for cooperation. Different people may have various preferences of IDE/editors, also the folder could be placed differently. So here you go.
+
+1. `FORCE_OPEN_CODE_EDITOR`
+
+    When is not blank, `config.open_code.editor` will be overridden.
+
+    Set to `false`, `off` or `disabled` to disable the gem
+
+        $ /usr/bin/env FORCE_OPEN_CODE_EDITOR=off rails s
+
+2. `FORCE_OPEN_CODE_PLACE_HOLDER`
+
+    When is not blank, `config.open_code.place_holder` will be overridden.
+
+        $ /usr/bin/env FORCE_OPEN_CODE_PLACE_HOLDER='Open in VSCodium' rails s
+
+3. `FORCE_OPEN_CODE_ROOT_DIR`
+
+    When is not blank, `config.open_code.root_dir` will be overridden.
+
+        $ /usr/bin/env FORCE_OPEN_CODE_ROOT_DIR='/my/project/path' rails s

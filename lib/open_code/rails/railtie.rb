@@ -11,49 +11,18 @@ module OpenCode
       end
 
       initializer "open_code.insert_middleware" do |app|
-        next if ::Rails.env.production? || !defined?(::Rails::Server)
+        next unless ::Rails.env.development? && defined?(::Rails::Server)
 
-        require 'open_code/rails/const_assets'
-        require 'open_code/rails/middleware'
-
-        css = <<-CSS.strip_heredoc
-          .-gem-open-me-link {
-            box-sizing: border-box;
-            display: inline-block;
-            margin-left: 8px;
-            padding: 1px 6px;
-            vertical-align: middle;
-            border: 1px solid #FFCCCB;
-            color: #C52E23;
-            border-radius: 4px;
-            text-decoration: none;
-          }
-          .-gem-open-me-link:hover {
-            border-color: #C52E23;
-          }
-        CSS
+        editor = (ENV['FORCE_OPEN_CODE_EDITOR'].presence || cfg.editor).to_s.downcase
+        place_holder = ENV['FORCE_OPEN_CODE_PLACE_HOLDER'].presence || cfg.place_holder
+        root_dir = ENV['FORCE_OPEN_CODE_ROOT_DIR'].presence || cfg.root_dir
 
         cfg = config.open_code
-        if cfg.place_holder.blank?
-          b64 = Base64.strict_encode64(ConstAssets::ICONS[:vscode])
-          css << <<-CSS.strip_heredoc
-            .-gem-open-me-link {
-              padding: 3px;
-            }
-            .-gem-open-me-link::after {
-              display: block;
-              content: '';
-              width: 12px;
-              height: 12px;
-              background-image: url('data:image/svg+xml;base64,#{b64}');
-            }
-          CSS
-        end
+        cfg.editor = editor.presence || 'vscode'
+        cfg.place_holder = place_holder
+        cfg.root_dir = (root_dir.presence || ::Rails.root).to_s.tr('\\', '/').chomp('/')
+        next unless Middleware.loadable?(cfg)
 
-        Middleware.css = css.freeze
-        Middleware.place_holder = cfg.place_holder
-        Middleware.root_dir = (cfg.root_dir.presence || ::Rails.root).to_s.tr('\\', '/').chomp('/')
-        Middleware.scheme = cfg.editor.presence || 'vscode'
         app.middleware.insert_before(ActionDispatch::DebugExceptions, Middleware)
       end
     end
