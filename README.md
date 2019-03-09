@@ -1,5 +1,7 @@
 # OpenCode::Rails
 
+[![Build Status](https://travis-ci.com/eGust/open_code-rails.svg?branch=master)](https://travis-ci.com/eGust/open_code-rails)
+
 Add links in exception page to open Application Trace file to line in VSCode. Now only support [VSCode](https://code.visualstudio.com/) or [VSCodium](https://github.com/VSCodium/vscodium).
 
 - Show VSCode icons
