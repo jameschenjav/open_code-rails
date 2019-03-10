@@ -10,11 +10,10 @@ module OpenCode
       end
 
       def call(env)
-        res = nil
+        res = @app.call(env)
         begin
-          res = @app.call(env)
           status, headers, body = res
-          return res unless status == 500 && headers['Content-Type'].to_s.include?('html')
+          return res unless status.to_s == '500' && headers['Content-Type'].to_s.include?('html')
 
           html = ''
           body.each { |part| html << part }
@@ -22,7 +21,7 @@ module OpenCode
           headers['Content-Length'] = body.size
           [status, headers, [body]]
         rescue => e
-          ::Rails.logger.error do
+          ::Rails.try(:logger).try(:error) do
             <<-LOG.strip_heredoc
               [OpenCode::Rails::Middleware] #{e.class}: #{e}
                 Sorry still something went wrong
