@@ -21,7 +21,7 @@ module OpenCode
           headers['Content-Length'] = body.size
           [status, headers, [body]]
         rescue => e
-          ::Rails.try(:logger).try(:error) do
+          ::Rails.try(:logger)&.error do
             <<-LOG.strip_heredoc
               [OpenCode::Rails::Middleware] #{e.class}: #{e}
                 Sorry still something went wrong

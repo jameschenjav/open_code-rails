@@ -37,7 +37,7 @@ module OpenCode
           prefix = lines.find { |ln| ln =~ /^var\s*prefix/ }
           prefix = prefix.match(/prefix\s*=\s*'(.+?)';$/)[1]
           place_holder = lines.find { |ln| ln =~ /<a href=.+?open-code-rails-link/ }
-          place_holder = place_holder.match(/open-code-rails-link">(.*?)<\/a>';$/)[1]
+          place_holder = place_holder.match(%r{open-code-rails-link">(.*?)<\/a>';$})[1]
 
           expect(prefix.starts_with?("vscode://")).to be true
           expect(lines.find { |ln| ln =~ /\.open-code-rails-link::after/ }).to be_truthy
@@ -53,7 +53,7 @@ module OpenCode
           prefix = lines.find { |ln| ln =~ /^var\s*prefix/ }
           prefix = prefix.match(/prefix\s*=\s*'(.+?)';$/)[1]
           place_holder = lines.find { |ln| ln =~ /<a href=.+?open-code-rails-link/ }
-          place_holder = place_holder.match(/open-code-rails-link">(.*?)<\/a>';$/)[1]
+          place_holder = place_holder.match(%r{open-code-rails-link">(.*?)<\/a>';$})[1]
 
           expect(prefix.starts_with?("vscodium://")).to be true
           expect(lines.find { |ln| ln =~ /\.open-code-rails-link::after/ }).to be_truthy
@@ -69,7 +69,7 @@ module OpenCode
           prefix = lines.find { |ln| ln =~ /^var\s*prefix/ }
           prefix = prefix.match(/prefix\s*=\s*'(.+?)';$/)[1]
           place_holder = lines.find { |ln| ln =~ /<a href=.+?open-code-rails-link/ }
-          place_holder = place_holder.match(/open-code-rails-link">(.*?)<\/a>';$/)[1]
+          place_holder = place_holder.match(%r{open-code-rails-link">(.*?)<\/a>';$})[1]
 
           expect(prefix.starts_with?("vscode://")).to be true
           expect(lines.find { |ln| ln =~ /\.open-code-rails-link::after/ }).to be_falsy
@@ -86,7 +86,7 @@ module OpenCode
           prefix = lines.find { |ln| ln =~ /^var\s*prefix/ }
           prefix = prefix.match(/prefix\s*=\s*'(.+?)';$/)[1]
           place_holder = lines.find { |ln| ln =~ /<a href=.+?open-code-rails-link/ }
-          place_holder = place_holder.match(/open-code-rails-link">(.*?)<\/a>';$/)[1]
+          place_holder = place_holder.match(%r{open-code-rails-link">(.*?)<\/a>';$})[1]
 
           expect(prefix.starts_with?("vscodium://")).to be true
           expect(lines.find { |ln| ln =~ /\.open-code-rails-link::after/ }).to be_falsy
