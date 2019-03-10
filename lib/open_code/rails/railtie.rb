@@ -13,11 +13,11 @@ module OpenCode
       initializer "open_code.insert_middleware" do |app|
         next unless ::Rails.env.development? && defined?(::Rails::Server)
 
+        cfg = config.open_code
         editor = (ENV['FORCE_OPEN_CODE_EDITOR'].presence || cfg.editor).to_s.downcase
         place_holder = ENV['FORCE_OPEN_CODE_PLACE_HOLDER'].presence || cfg.place_holder
         root_dir = ENV['FORCE_OPEN_CODE_ROOT_DIR'].presence || cfg.root_dir
 
-        cfg = config.open_code
         cfg.editor = editor.presence || 'vscode'
         cfg.place_holder = place_holder
         cfg.root_dir = (root_dir.presence || ::Rails.root).to_s.tr('\\', '/').chomp('/')
