@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Open file in editor in Rails exception pages'
   spec.description   = 'Add an link beside files on exception'
   spec.homepage      = "https://github.com/eGust/open_code-rails"
+  spec.license       = 'MIT'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
