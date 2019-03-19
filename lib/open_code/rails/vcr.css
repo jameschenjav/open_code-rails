@@ -1,0 +1,15 @@
+.open-code-rails-link {
+  box-sizing: border-box;
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  vertical-align: middle;
+  border: 1px solid #FFCCCB;
+  color: #C52E23;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.open-code-rails-link:hover {
+  border-color: #C52E23;
+}
