@@ -1,4 +1,6 @@
 require 'active_support/all'
+require 'pathname'
+require 'json'
 
 module OpenCode
   module Rails
@@ -36,76 +38,38 @@ module OpenCode
         def loadable?(config)
           return false if %w[false off disabled].include?(config.editor)
 
-          css = generate_css(config.place_holder.blank?)
-          js = generate_js(config.editor, config.place_holder, config.root_dir)
-          self.html_code = "<style>#{css}</style><script>#{js}</script>"
+          dir = Pathname.new(__dir__)
+          css = dir.join('vcr.css').read
+          defaults = generate_defaults(dir, config.editor, config.place_holder, config.root_dir)
+          js = dir.join('vcr.js').read.sub('$$__DEFAULTS__$$', JSON.pretty_generate(defaults))
+          self.html_code = <<-HTML.strip_heredoc
+            <style id="_open-code-rails_">
+            #{css}
+            </style>
+            <script>
+            #{js}
+            </script>
+          HTML
           true
         end
 
         private
 
-        def generate_js(scheme, place_holder, root_dir)
-          <<-JS.strip_heredoc
-            (function () {
-              setTimeout(function () {
-                var prefix = '#{scheme}://file/#{root_dir}';
-                var tmp = document.createElement('div');
-                var items = document.querySelectorAll('#Application-Trace .trace-frames');
-                for (var i = 0; i < items.length; i += 1) {
-                  var item = items[i];
-                  var uri = [prefix, item.innerText.split(':in')[0]].join('/');
-                  var h = JSON.stringify(encodeURI(uri));
-                  var html = '<a href=' + h + ' class="open-code-rails-link">#{place_holder}</a>';
+        def generate_defaults(dir, scheme, place_holder, root_dir)
+          icon_url = if place_holder.blank?
+            require 'base64'
+            "data:image/svg+xml;base64,#{Base64.strict_encode64(dir.join('vscode.svg').read)}"
+          else
+            false
+          end
 
-                  var selFrameId = JSON.stringify(item.dataset.frameId);
-                  var links = document.querySelectorAll('[data-frame-id=' + selFrameId + ']');
-                  for (var j = 0; j < links.length; j += 1) {
-                    var link = links[j];
-                    tmp.innerHTML = html;
-                    link.parentElement.insertBefore(tmp.firstChild, link.nextSibling);
-                  }
-                }
-              }, 0);
-            })();
-          JS
-        end
-
-        def generate_css(use_icon)
-          css = <<-CSS.strip_heredoc
-            .open-code-rails-link {
-              box-sizing: border-box;
-              display: inline-block;
-              margin-left: 8px;
-              padding: 1px 6px;
-              vertical-align: middle;
-              border: 1px solid #FFCCCB;
-              color: #C52E23;
-              border-radius: 4px;
-              text-decoration: none;
-            }
-            .open-code-rails-link:hover {
-              border-color: #C52E23;
-            }
-          CSS
-          return css unless use_icon
-
-          require 'pathname'
-          require 'base64'
-          icon = Base64.strict_encode64(Pathname.new(__dir__).join('vscode.svg').read)
-
-          css << <<-CSS.strip_heredoc
-            .open-code-rails-link {
-              padding: 3px;
-            }
-            .open-code-rails-link::after {
-              display: block;
-              content: '';
-              width: 12px;
-              height: 12px;
-              background-image: url('data:image/svg+xml;base64,#{icon}');
-            }
-          CSS
-          css
+          {
+            scheme: scheme,
+            rootDir: root_dir,
+            placeHolder: place_holder,
+            iconUrl: icon_url,
+            disabled: false,
+          }
         end
       end
     end

@@ -70,7 +70,9 @@ You should put settings in `config/environments/development.rb` because this gem
     end
     ```
 
-### Advanced - via Environment Variables
+### Advanced
+
+#### Environment Variables
 
 Some flexibility is probably required for cooperation. Different people may have various preferences of IDE/editors, also the folder could be placed differently. So here you go.
 
@@ -93,3 +95,35 @@ Some flexibility is probably required for cooperation. Different people may have
     When is not blank, `config.open_code.root_dir` will be overridden.
 
         $ /usr/bin/env FORCE_OPEN_CODE_ROOT_DIR='/my/project/path' rails s
+
+#### Browser
+
+This functionality requires [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
+
+- `_openCode.settings()`
+
+    Should return keys below
+
+    - disabled
+    - iconUrl or placeHolder - you can only have one at the same time.
+    - rootDir
+    - scheme - same as `config.open_code.editor`
+    - linkBuilder - a function to build `href`. Default builder:
+
+        ```js
+        function (scheme, rootDir, path, line) {
+          return scheme + '://file/' + encodeURI(rootDir + '/' + path + ':' + line);
+        }
+        ```
+
+- `_openCode.getValue(key)`
+
+    Get individual value by given key.
+
+- `_openCode.setValue(key, value)`
+
+    Set individual value by given key.
+
+- `_openCode.reset()`
+
+    Reset all settings - back to default.
