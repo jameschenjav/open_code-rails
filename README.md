@@ -12,6 +12,10 @@ Add links in exception page to open Application Trace file to line in VSCode. No
     ![to_line](screenshots/to_line.png)
 - Custom Settings and Full Trace
     ![config_full_trace](screenshots/config_full_trace.png)
+- Display URLs in console/log files
+    ![logger_url](screenshots/logger_url.png)
+- Per browser settings in localStorage
+    ![browser_settings](screenshots/browser_settings.png)
 
 ## Installation
 
@@ -70,6 +74,12 @@ You should put settings in `config/environments/development.rb` because this gem
     end
     ```
 
+4. `config.open_code.logger_url` - default: `false`
+
+    Display VSCode/VSCodium urls rather than relative filenames in Rails Logger. So you should see URLs in dev mode console and `development.log`.
+
+    > This option directly replaces the results of `::Rails.backtrace_cleaner.clean`.
+
 ### Advanced
 
 #### Environment Variables
@@ -95,6 +105,14 @@ Some flexibility is probably required for cooperation. Different people may have
     When is not blank, `config.open_code.root_dir` will be overridden.
 
         $ /usr/bin/env FORCE_OPEN_CODE_ROOT_DIR='/my/project/path' rails s
+
+4. `FORCE_OPEN_CODE_LOGGER_URL`
+
+    When is not blank, `config.open_code.logger_url` will be overridden.
+
+    Set to `false`, `off` or `disabled` to disable this functionality. Blank value will be ignored. All other values will enable this functionality.
+
+        $ /usr/bin/env FORCE_OPEN_CODE_LOGGER_URL=on rails s
 
 #### Browser
 
@@ -127,3 +145,5 @@ This functionality requires [localStorage](https://developer.mozilla.org/en-US/d
 - `_openCode.reset()`
 
     Reset all settings - back to default.
+
+> Changing this settings only applies to the current browser. It does not have any impacts to Rails app.
