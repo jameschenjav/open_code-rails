@@ -5,6 +5,7 @@ module OpenCode
     class Railtie < ::Rails::Railtie
       config.open_code = ActiveSupport::OrderedOptions.new
       config.open_code.editor = 'vscode'
+      config.open_code.logger_url = false
 
       initializer "open_code.initialize" do
         abort('open_code-rails should not be used in production mode!') if ::Rails.env.production?
@@ -24,6 +25,30 @@ module OpenCode
         next unless Middleware.loadable?(cfg)
 
         app.middleware.insert_before(ActionDispatch::DebugExceptions, Middleware)
+
+        logger_url = ENV['FORCE_OPEN_CODE_LOGGOR_URL']
+        logger_url = if logger_url.blank?
+          cfg.logger_url
+        else
+          !%w[OFF FALSE DISABLED].include?(logger_url.upcase)
+        end
+        next unless logger_url
+
+        scheme = cfg.editor
+        root_dir = cfg.root_dir
+
+        bc = ::Rails.backtrace_cleaner
+        bc.class_eval { alias_method :vcr_clean, :clean }
+        bc.define_singleton_method(:clean) do |*args|
+          vcr_clean(*args).map do |ln|
+            begin
+              next ln unless ln =~ %r(^\w+\/.+?:in)
+              " #{scheme}://file/#{root_dir}/#{ln.split(':in').join(' in')}"
+            rescue => _e
+              ln
+            end
+          end
+        end
       end
     end
   end
