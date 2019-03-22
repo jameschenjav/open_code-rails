@@ -26,7 +26,7 @@ module OpenCode
 
         app.middleware.insert_before(ActionDispatch::DebugExceptions, Middleware)
 
-        logger_url = ENV['FORCE_OPEN_CODE_LOGGOR_URL']
+        logger_url = ENV['FORCE_OPEN_CODE_LOGGER_URL']
         logger_url = if logger_url.blank?
           cfg.logger_url
         else
