@@ -1,5 +1,5 @@
 module OpenCode
   module Rails
-    VERSION = "0.4.3".freeze
+    VERSION = "0.6.0".freeze
   end
 end
